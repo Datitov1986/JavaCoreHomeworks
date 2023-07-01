@@ -1,6 +1,8 @@
-
 import java.util.*;
 
+/**
+ * Основной класс игры крестики-нолики
+ */
 public class TicTacToeAI {
     // Размер игрового поля
     private static final int BOARD_SIZE = 3;
@@ -14,26 +16,37 @@ public class TicTacToeAI {
     private static char[][] field;
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    // Структура, представляющая ход
+    /**
+     * Структура, представляющая ход
+     */
     public static class Move {
         int row, col;
     }
 
+    /**
+     * Точка входа в программу
+     * @param args стандартные аргументы
+     */
     public static void main(String[] args) {
-        initialize();
-        printField();
+        initialize(); // инициализация игры
+        printField(); // вывод на экран игрового поля
 
         while (isMovesLeft(field)) {
-            humanTurn();
+            humanTurn(); // вызов метода, реализующего ход игрока
 
-            if (gameCheck(DOT_HUMAN, "Ура! Победа!!!")) break;
+            if (gameCheck(DOT_HUMAN, "Ура! Победа!!!")) break; // проверка после хода игрока на победу
 
-            aiTurn();
+            aiTurn(); // вызов метода, реализующего ход компьютера
 
-            if (gameCheck(DOT_AI, "Поздравляю, тебя уделал бот!")) break;
+            if (gameCheck(DOT_AI, "Поздравляю, тебя уделал бот!")) break; // проверка после хода компьютера на победу
         }
     }
 
+    /**
+     * Метод проверяющий валидность хода
+     * @param playerRow строка
+     * @param playerCol столбец
+     */
     private static void isCellValid(int playerRow, int playerCol) {
         while (playerRow < 0 || playerRow >= BOARD_SIZE || playerCol < 0 || playerCol >= BOARD_SIZE ||
                 field[playerRow][playerCol] != DOT_EMPTY) {
@@ -45,6 +58,9 @@ public class TicTacToeAI {
         }
     }
 
+    /**
+     * Метод, реализующий ход игрока
+     */
     private static void humanTurn() {
         System.out.println("Ваш ход. Введите номер строки (0-2):");
         int playerRow = SCANNER.nextInt();
@@ -58,6 +74,10 @@ public class TicTacToeAI {
         printField();
     }
 
+    /**
+     * Метод, реализующий ход компьютера, использует методы:
+     * findBestMove, printField
+     */
     private static void aiTurn() {
         Move bestMove = findBestMove(field);
         field[bestMove.row][bestMove.col] = DOT_AI;
@@ -65,6 +85,12 @@ public class TicTacToeAI {
         printField();
     }
 
+    /**
+     * Метод, проверяющий состояние игры, определяющий победителя или ничью
+     * @param symbol символ ходящего игрока (крестик или нолик)
+     * @param message сообщение победителю
+     * @return булевый тип, возвращает true если игра завершилась или false, если игра еще продолжается
+     */
     private static boolean gameCheck(char symbol, String message) {
         if (checkWin(symbol) == 10) {
             System.out.println(message);
@@ -80,6 +106,11 @@ public class TicTacToeAI {
         return false;
     }
 
+    /**
+     * Метод, для проверки ничьей
+     * @param symbol символ ходящего игрока
+     * @return если есть пустые клетки, возвращает false, если все клетки заняты возвращает true
+     */
     private static boolean checkDraw(char symbol) {
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
@@ -89,11 +120,21 @@ public class TicTacToeAI {
         return true;
     }
 
+    /**
+     * Метод, проверяющий пустая клетка или нет
+     * @param x строка
+     * @param y столбец
+     * @return возвращает true или false
+     */
     private static boolean isCellEmpty(int x, int y) {
         return field[x][y] == DOT_EMPTY;
     }
 
-    // Функция для проверки, что на поле есть свободные ячейки
+    /**
+     * Метод для проверки, что на поле есть свободные ячейки
+     * @param board символы с поля
+     * @return возвращает true или false
+     */
     private static boolean isMovesLeft(char[][] board) {
         for (int i = 0; i < SIZE_X; i++) {
             for (int j = 0; j < SIZE_Y; j++) {
@@ -103,7 +144,13 @@ public class TicTacToeAI {
         return false;
     }
 
-    // Функция для оценки текущего состояния поля
+    /**
+     * Метод для определения победителя игры, передает целочисленное значение,
+     * проверяет строки, столбцы, диагонали.
+     * @param symbol символ ходящего игрока
+     * @return возвращает числовое значение
+     * 10 (победа компьютера), -10 (победа игрока), 0 (ничья)
+     */
     private static int checkWin(char symbol) {
         // Проверка строк
         for (int row = 0; row < SIZE_X; row++) {
@@ -139,7 +186,13 @@ public class TicTacToeAI {
         return 0;
     }
 
-    // Рекурсивная функция для поиска лучшего хода
+    /**
+     * Рекурсивный метод для поиска лучшего хода
+     * @param symbol символ
+     * @param depth счетчик ходов
+     * @param isMaximizer значение true указывает на ход компьютера
+     * @return возвращает числовое значение для выбора хода
+     */
     private static int minimax(char symbol, int depth, boolean isMaximizer) {
         int score = checkWin(symbol);
 
@@ -167,7 +220,6 @@ public class TicTacToeAI {
                         // Рекурсивный вызов для оценки хода
                         best = Math.max(best, minimax(DOT_AI, depth + 1, !isMaximizer));
 
-                        // Отметить ход
                         field[i][j] = DOT_EMPTY;
                     }
                 }
@@ -186,7 +238,6 @@ public class TicTacToeAI {
                         // Рекурсивный вызов для оценки хода
                         best = Math.min(best, minimax(DOT_HUMAN, depth + 1, !isMaximizer));
 
-                        // Отметить ход
                         field[i][j] = DOT_EMPTY;
                     }
                 }
@@ -195,7 +246,11 @@ public class TicTacToeAI {
         }
     }
 
-    // Функция для наилучшего хода компьютера
+    /**
+     * Метод для наилучшего хода компьютера
+     * @param board координаты на поле
+     * @return возвращает координату для наилучшего хода
+     */
     private static Move findBestMove(char[][] board) {
         int bestVal = -1000;
         Move bestMove = new Move();
@@ -223,6 +278,9 @@ public class TicTacToeAI {
         return bestMove;
     }
 
+    /**
+     * Метод инициализации игры
+     */
     private static void initialize() {
         field = new char[SIZE_X][SIZE_Y];
         for (int x = 0; x < SIZE_X; x++) {
@@ -232,6 +290,9 @@ public class TicTacToeAI {
         }
     }
 
+    /**
+     * Метод вывода на экран игрового поля
+     */
     private static void printField() {
         System.out.print("+");
         for (int i = 0; i < SIZE_X * 2 + 1; i++) {
