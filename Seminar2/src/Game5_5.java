@@ -1,8 +1,8 @@
 import java.util.Random;
 import java.util.Scanner;
 
-public class Game {
-    private static final int WIN_COUNT = 3;
+public class Game5_5 {
+    private static final int WIN_COUNT = 5;
     private static final char DOT_HUMAN = 'X';
     private static final char DOT_AI = 'O';
     private static final char DOT_EMPTY = '-';
@@ -11,8 +11,8 @@ public class Game {
     private static final Random RANDOM = new Random();
 
     private static char[][] field;
-    private static final int SIZE_X = 3;
-    private static final int SIZE_Y = 3;
+    private static final int SIZE_X = 5;
+    private static final int SIZE_Y = 5;
 
     public static void main(String[] args) {
 
@@ -50,12 +50,12 @@ public class Game {
         for (int i = 0; i < SIZE_X; i++) {
             System.out.print(i + 1 + "|");
 
-            for(int j = 0; j < SIZE_Y; j++) {
+            for (int j = 0; j < SIZE_Y; j++) {
                 System.out.print(field[i][j] + "|");
             }
             System.out.println();
         }
-        for (int i = 0; i<SIZE_X * 2 + 2; i++) {
+        for (int i = 0; i < SIZE_X * 2 + 2; i++) {
             System.out.print("-");
         }
         System.out.println();
@@ -103,28 +103,22 @@ public class Game {
     }
 
     private static boolean checkWin(char symbol) {
-//        if (field[0][0] == symbol && field[0][1] == symbol && field[0][2] == symbol) return true;
-//        if (field[1][0] == symbol && field[1][1] == symbol && field[1][2] == symbol) return true;
-//        if (field[2][0] == symbol && field[2][1] == symbol && field[2][2] == symbol) return true;
-//
-//        if (field[0][0] == symbol && field[1][1] == symbol && field[2][2] == symbol) return true;
-//        if (field[0][2] == symbol && field[1][1] == symbol && field[2][0] == symbol) return true;
-//
-//        if (field[0][0] == symbol && field[1][0] == symbol && field[2][0] == symbol) return true;
-//        if (field[0][1] == symbol && field[1][1] == symbol && field[2][1] == symbol) return true;
-//        if (field[0][2] == symbol && field[1][2] == symbol && field[2][2] == symbol) return true;
-//        return false;
         for (int i = 0; i < SIZE_X; i++) {
-            if (field[i][0] == symbol && field[i][1] == symbol && field[i][2] == symbol) {
-                return true; // проверка горизонтали
+            if (field[i][0] == symbol && field[i][1] == symbol && field[i][2] == symbol
+                    && field[i][3] == symbol && field[i][4] == symbol) {
+                return true;
             }
-            if (field[0][i] == symbol && field[1][i] == symbol && field[2][i] == symbol) {
-                return true; // проверка вертикали
+            if (field[0][i] == field[1][i] && field[0][i] == field[2][i] && field[0][i] == field[3][i]
+                    && field[0][i] == field[4][i] && field[1][i] != DOT_EMPTY) {
+                return true;
             }
+            return true;
         }
-        if (field[0][0] == symbol && field[1][1] == symbol && field[2][2] == symbol) return true;
-        if (field[0][2] == symbol && field[1][1] == symbol && field[2][0] == symbol) return true;
-        return false; // проверка диагоналей
+        if (field[0][0] == symbol && field[1][1] == symbol && field[2][2] == symbol
+                && field[3][3] == symbol && field[4][4] == symbol) return true;
+        if (field[0][4] == symbol && field[1][3] == symbol && field[2][2] == symbol
+                && field[3][1] == symbol && field[4][0] == symbol) return true;
+        return false;
     }
 
     private static boolean checkDraw(char symbol) {
