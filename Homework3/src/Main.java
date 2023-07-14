@@ -23,6 +23,8 @@ public class Main {
         System.out.println(comp.compare(evgeniy, sergey));
         CompareName compName = new CompareName();
         System.out.println(compName.compare(sergey, slava));
+        CompareSalary compSal = new CompareSalary();
+        System.out.println(compSal.compare(slava, ivan));
 
     }
 }
