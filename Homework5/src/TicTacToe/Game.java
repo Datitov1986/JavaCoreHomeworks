@@ -1,5 +1,6 @@
 package TicTacToe;
 
+import java.io.*;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -16,24 +17,66 @@ public class Game {
     private static final int SIZE_X = 3;
     private static final int SIZE_Y = 3;
 
+
     public static void main(String[] args) {
 
         initialize();
         printField();
-        while (true) {
-            humanTurn();
-            printField();
-            if (gameCheck(DOT_HUMAN, "You won!"))
-                break;
+        System.out.println("Если Вы хотите начать игру введите 1, если Вы хотите загрузить сохраненную игру" +
+                "нажмите 2");
+        int a = SCANNER.nextInt();
+        switch (a) {
+            case 1:
+                while (true) {
+                    humanTurn();
+                    printField();
+                    if (gameCheck(DOT_HUMAN, "You won!"))
+                        break;
 
-            aiTurn();
-            printField();
-            if (gameCheck(DOT_AI, "Computer won!"))
-                break;
+                    aiTurn();
+                    printField();
+                    if (gameCheck(DOT_AI, "Computer won!"))
+                        break;
+                }
+            case 2:
+                loadGame("saveGame.txt");
+                printField();
+                while (true) {
+                    humanTurn();
+                    printField();
+                    if (gameCheck(DOT_HUMAN, "You won!"))
+                        break;
+
+                    aiTurn();
+                    printField();
+                    if (gameCheck(DOT_AI, "Computer won!"))
+                        break;
+                }
+        }
+
+
+    }
+
+    public static void saveGame(String fileName) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            outputStream.writeObject(field);
+            System.out.println("Save successful!");
+        } catch (IOException e) {
+            System.out.println("Ошибка при сохранении игры: " + e.getMessage());
         }
     }
 
-    private static void initialize() {
+    public static void loadGame(String fileName) {
+        initialize();
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            field = (char[][]) inputStream.readObject();
+            System.out.println("Load successful!");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Ошибка при загрузке игры: " + e.getMessage());
+        }
+    }
+
+    public static void initialize() {
         field = new char[SIZE_X][SIZE_Y];
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
@@ -52,25 +95,38 @@ public class Game {
         for (int i = 0; i < SIZE_X; i++) {
             System.out.print(i + 1 + "|");
 
-            for(int j = 0; j < SIZE_Y; j++) {
+            for (int j = 0; j < SIZE_Y; j++) {
                 System.out.print(field[i][j] + "|");
             }
             System.out.println();
         }
-        for (int i = 0; i<SIZE_X * 2 + 2; i++) {
+        for (int i = 0; i < SIZE_X * 2 + 2; i++) {
             System.out.print("-");
         }
         System.out.println();
     }
 
     private static void humanTurn() {
-        int x, y;
-        do {
-            System.out.println("Введите координаты X и Y (от 1 до 3) через пробел");
-            x = SCANNER.nextInt() - 1;
-            y = SCANNER.nextInt() - 1;
-        } while (!isCellValid(x, y) || !isCellEmpty(x, y));
-        field[x][y] = DOT_HUMAN;
+        int x, y, b;
+        System.out.println("Чтобы сохранить игру нажмите 1, чтобы продолжить игру без сохранения" +
+                "нажмите 2, чтобы выйти из игры нажмите 3");
+        b = SCANNER.nextInt();
+        switch (b) {
+            case 1:
+                saveGame("saveGame.txt");
+            case 2:
+                do {
+                    System.out.println("Введите координаты X и Y (от 1 до 3) через пробел");
+                    x = SCANNER.nextInt() - 1;
+                    y = SCANNER.nextInt() - 1;
+                } while (!isCellValid(x, y) || !isCellEmpty(x, y));
+                field[x][y] = DOT_HUMAN;
+            case 3:
+                System.out.println("Спасибо за игру! До свидания");
+                break;
+        }
+
+
     }
 
     private static boolean isCellValid(int x, int y) {
